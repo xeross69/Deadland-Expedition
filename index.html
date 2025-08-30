@@ -1,10 +1,798 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Test Deadlands</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deadlands Expedition - Serveur 7 Days to Die</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 50%, #1a1a1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #ff6b35;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff6b35;
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #ff6b35;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ff6b35;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        main {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23221a0f" width="1200" height="600"/><g opacity="0.3"><circle fill="%23ff6b35" cx="200" cy="100" r="50"/><circle fill="%23ff6b35" cx="800" cy="150" r="30"/><circle fill="%23ff6b35" cx="1000" cy="400" r="40"/></g></svg>');
+            background-size: cover;
+            border-radius: 20px;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #ff6b35;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .server-info {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .connect-btn {
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .connect-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.6);
+            background: linear-gradient(45deg, #ff8c42, #ff6b35);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b35, #ff8c42, #ff6b35);
+            background-size: 200% 100%;
+            animation: gradient 2s ease infinite;
+        }
+
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 107, 53, 0.5);
+            box-shadow: 0 15px 35px rgba(255, 107, 53, 0.2);
+        }
+
+        .feature-card h3 {
+            color: #ff6b35;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 3rem 0;
+        }
+
+        .stat-item {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff6b35;
+            display: block;
+        }
+
+        .server-address {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #ff6b35;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .server-address:hover {
+            background: rgba(255, 107, 53, 0.1);
+            transform: scale(1.02);
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .copy-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 107, 53, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1001;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+        }
+
+        .map-controls button:hover {
+            background: rgba(255,107,53,0.4);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .map-container {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
-    <h1>Deadlands Expedition - Test</h1>
-    <p>Si vous voyez ceci, ça marche !</p>
+    <header>
+        <nav class="container">
+            <div class="logo">🧟 Deadlands Expedition</div>
+            <ul class="nav-links">
+                <li><a href="#home">Accueil</a></li>
+                <li><a href="#server">Serveur</a></li>
+                <li><a href="#features">Caractéristiques</a></li>
+                <li><a href="#map">Carte Live</a></li>
+                <li><a href="#connection">Connexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section id="home" class="hero">
+            <h1>Deadlands Expedition</h1>
+            <p>Survivez dans les terres désolées de Navezgane</p>
+            <div class="server-info">
+                <h3>🎮 Rejoignez-nous maintenant !</h3>
+                <div class="server-address" onclick="copyToClipboard('5.62.99.70:26800')" title="Cliquer pour copier">
+                    📡 5.62.99.70:26800
+                </div>
+                <p style="margin: 1rem 0; font-size: 0.9rem; opacity: 0.8;">
+                    🔒 Mot de passe requis : <span style="color: #ff6b35; font-family: monospace;">1990</span>
+                </p>
+                <button class="connect-btn pulse" onclick="copyToClipboard('5.62.99.70:26800')">
+                    Copier l'adresse
+                </button>
+            </div>
+        </section>
+
+        <section id="server" class="stats">
+            <div class="stat-item">
+                <span class="stat-number">7/9</span>
+                <span>Joueurs Max</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">PvP</span>
+                <span>Mode de jeu</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">Navezgane</span>
+                <span>Carte</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">Français</span>
+                <span>Langue</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">60min</span>
+                <span>Cycle Jour/Nuit</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">7 Jours</span>
+                <span>Blood Moon</span>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="feature-card">
+                <h3>🏗️ Revendication de Terrain</h3>
+                <p>Réclamez jusqu'à 5 zones de terrain (41x41 blocs chacune). Protection renforcée de vos constructions avec durabilité x4 quand vous êtes connecté.</p>
+            </div>
+            <div class="feature-card">
+                <h3>⚔️ PvP Intense</h3>
+                <p>Combat joueur contre joueur activé ! Affrontez d'autres survivants pour les ressources. Les objets tombent à la mort mais sans pénalité d'XP.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🌙 Blood Moon Redoutable</h3>
+                <p>Chaque 7 jours, préparez-vous à la Blood Moon avec des hordes de zombies renforcées. Alerte 8 heures avant pour vous préparer !</p>
+            </div>
+            <div class="feature-card">
+                <h3>📈 Progression Accélérée</h3>
+                <p>XP x2 pour une progression plus rapide et butin x2 plus abondant. Respawn du loot tous les 10 jours pour maintenir l'action.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🗺️ Carte Navezgane</h3>
+                <p>Explorez la carte classique Navezgane avec tous ses secrets. Rendu de carte activé pour suivre votre progression d'exploration.</p>
+            </div>
+            <div class="feature-card">
+                <h3>✈️ Largages Aériens</h3>
+                <p>Largages aériens toutes les 72 heures avec marqueurs visibles. Courses épiques pour récupérer un butin de qualité supérieure !</p>
+            </div>
+            <div class="feature-card">
+                <h3>🏠 Zones Sécurisées</h3>
+                <p>Protection des nouveaux joueurs (niveau 5 max) pendant 5 heures. Bedrolls avec zone protégée de 30 blocs, expirent après 45 jours.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🧟 Zombies Réalistes</h3>
+                <p>Zombies marchent le jour, courent la nuit. Les ferals sont toujours dangereux. Max 64 zombies et 64 animaux simultanés pour l'action constante.</p>
+            </div>
+        </section>
+
+        <section id="map">
+            <div class="feature-card">
+                <h3>🗺️ Carte & Statut en Temps Réel</h3>
+                
+                <div class="map-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 1.5rem 0;">
+                    <div class="server-status" style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 10px; border: 1px solid rgba(255,107,53,0.3);">
+                        <h4 style="color: #ff6b35; margin-bottom: 1rem;">📊 Statut du Serveur</h4>
+                        <div class="status-item" style="display: flex; justify-content: space-between; margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 5px;">
+                            <span>🟢 Statut:</span>
+                            <span id="serverStatus" style="color: #4ade80;">En ligne</span>
+                        </div>
+                        <div class="status-item" style="display: flex; justify-content: space-between; margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 5px;">
+                            <span>👥 Joueurs:</span>
+                            <span id="playerCount" style="color: #ff6b35;">-- / 7</span>
+                        </div>
+                        <div class="status-item" style="display: flex; justify-content: space-between; margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 5px;">
+                            <span>⏰ Temps de jeu:</span>
+                            <span id="gameTime" style="color: #60a5fa;">Jour --</span>
+                        </div>
+                        <div class="status-item" style="display: flex; justify-content: space-between; margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 5px;">
+                            <span>🌙 Prochaine Blood Moon:</span>
+                            <span id="bloodMoon" style="color: #ef4444;">-- jours</span>
+                        </div>
+                        <div class="status-item" style="display: flex; justify-content: space-between; margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 5px;">
+                            <span>📡 Ping:</span>
+                            <span id="serverPing" style="color: #10b981;">-- ms</span>
+                        </div>
+                        <div class="status-item" style="display: flex; justify-content: space-between; margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 5px;">
+                            <span>🔄 Dernière MAJ:</span>
+                            <span id="lastUpdate" style="color: #a855f7;">--:--</span>
+                        </div>
+                    </div>
+
+                    <div class="navezgane-info" style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 10px; border: 1px solid rgba(255,107,53,0.3);">
+                        <h4 style="color: #ff6b35; margin-bottom: 1rem;">🌍 Carte Navezgane</h4>
+                        <p style="margin-bottom: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                            Explorez la carte classique de 7 Days to Die avec ses villes emblématiques et ses biomes variés.
+                        </p>
+                        <div class="map-locations" style="font-size: 0.8rem; line-height: 1.6;">
+                            <div style="margin: 0.5rem 0;"><strong>🏙️ Villes principales :</strong></div>
+                            <div style="margin-left: 1rem;">
+                                • Gravestown (Nord-Ouest)<br>
+                                • Departure (Centre-Nord)<br>
+                                • Perishton (Sud-Ouest)<br>
+                                • Diersville (Sud-Est)<br>
+                                • Plainton (Centre-Sud)
+                            </div>
+                            <div style="margin: 0.5rem 0; margin-top: 1rem;"><strong>🌿 Biomes :</strong></div>
+                            <div style="margin-left: 1rem;">
+                                • Forêt tempérée<br>
+                                • Désert aride<br>
+                                • Terre brûlée<br>
+                                • Neige éternelle<br>
+                                • Zones irradiées
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-viewer" style="margin-top: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4 style="color: #ff6b35;">🖼️ Carte Interactive</h4>
+                        <div class="map-controls">
+                            <button onclick="refreshMap()" style="background: rgba(255,107,53,0.2); color: #ff6b35; border: 1px solid #ff6b35; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; margin: 0 0.5rem; transition: all 0.3s ease;">
+                                🔄 Actualiser
+                            </button>
+                            <button onclick="toggleFullscreen()" style="background: rgba(255,107,53,0.2); color: #ff6b35; border: 1px solid #ff6b35; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; margin: 0 0.5rem; transition: all 0.3s ease;">
+                                ⛶ Plein écran
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="mapContainer" style="width: 100%; height: 400px; background: linear-gradient(45deg, rgba(0,0,0,0.8), rgba(42,42,42,0.8)); border: 2px solid rgba(255,107,53,0.3); border-radius: 10px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                        <div style="text-align: center; color: rgba(255,255,255,0.6);">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🗺️</div>
+                            <h4 style="color: #ff6b35; margin-bottom: 0.5rem;">Carte du Serveur</h4>
+                            <p style="margin-bottom: 1rem;">La carte sera générée automatiquement pendant que les joueurs explorent</p>
+                            <div style="font-size: 0.9rem; opacity: 0.8;">
+                                <p>📍 Positions des joueurs en temps réel</p>
+                                <p>🏠 Bases et revendications territoriales</p>
+                                <p>📦 Points d'intérêt et largages aériens</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Simulation d'activité sur la carte -->
+                        <div id="mapActivity" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                            <div class="activity-dot" style="position: absolute; width: 8px; height: 8px; background: #ff6b35; border-radius: 50%; top: 30%; left: 25%; animation: pulse 2s infinite;"></div>
+                            <div class="activity-dot" style="position: absolute; width: 8px; height: 8px; background: #4ade80; border-radius: 50%; top: 60%; left: 70%; animation: pulse 2s infinite 0.5s;"></div>
+                            <div class="activity-dot" style="position: absolute; width: 8px; height: 8px; background: #60a5fa; border-radius: 50%; top: 80%; left: 40%; animation: pulse 2s infinite 1s;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; font-size: 0.85rem; opacity: 0.7; text-align: center;">
+                        💡 <strong>Info :</strong> La carte se met à jour automatiquement toutes les 30 secondes quand des joueurs sont connectés
+                    </div>
+                </div>
+
+                <div class="players-online" style="margin-top: 2rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 10px; border: 1px solid rgba(255,107,53,0.3);">
+                    <h4 style="color: #ff6b35; margin-bottom: 1rem;">👥 Joueurs Connectés</h4>
+                    <div id="playersList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="player-card" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👤</div>
+                            <div style="color: #ff6b35; font-weight: bold;">En attente...</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Aucun joueur connecté</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="connection">
+            <div class="feature-card">
+                <h3>🔌 Comment Se Connecter</h3>
+                <div style="text-align: left; margin-left: 1rem;">
+                    <h4 style="color: #ff6b35; margin: 1rem 0;">🎮 Étapes de Connexion :</h4>
+                    <ol style="margin-left: 1rem; line-height: 1.8;">
+                        <li>Lancez <strong>7 Days to Die</strong></li>
+                        <li>Cliquez sur <strong>"Rejoindre un jeu"</strong></li>
+                        <li>Sélectionnez l'onglet <strong>"IP"</strong></li>
+                        <li>Entrez l'adresse : <span style="background: rgba(255,107,53,0.2); padding: 2px 8px; border-radius: 4px; font-family: monospace;">5.62.99.70:26800</span></li>
+                        <li>Entrez le mot de passe : <span style="background: rgba(255,107,53,0.2); padding: 2px 8px; border-radius: 4px; font-family: monospace;">1990</span></li>
+                        <li>Cliquez sur <strong>"Se connecter"</strong></li>
+                    </ol>
+                    
+                    <h4 style="color: #ff6b35; margin: 1rem 0;">ℹ️ Informations Importantes :</h4>
+                    <ul style="margin-left: 1rem; line-height: 1.6;">
+                        <li>🌍 <strong>Région :</strong> Europe (faible latence)</li>
+                        <li>🔒 <strong>Anti-triche :</strong> EAC activé</li>
+                        <li>🎯 <strong>Crossplay :</strong> Activé (PC/Console)</li>
+                        <li>👁️ <strong>Visibilité :</strong> Serveur public</li>
+                        <li>📊 <strong>Dashboard Web :</strong> Disponible sur le port 26850</li>
+                    </ul>
+
+                    <p style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,107,53,0.1); border-radius: 8px; border-left: 4px solid #ff6b35;">
+                        <strong>💡 Conseil :</strong> Ajoutez le serveur à vos favoris pour le retrouver facilement !
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="rules">
+            <div class="feature-card">
+                <h3>📋 Règles & Informations du Serveur</h3>
+                <div style="text-align: left; margin-left: 1rem;">
+                    <h4 style="color: #ff6b35; margin: 1rem 0;">🎮 Règles de Base :</h4>
+                    <ul style="margin-left: 1rem;">
+                        <li>🚫 Pas de triche, hack ou exploitation de bugs</li>
+                        <li>🤝 Respectez les autres joueurs dans le chat</li>
+                        <li>⚖️ Les décisions des admins sont finales</li>
+                        <li>🏠 Respectez les zones revendiquées des autres</li>
+                        <li>🔄 Pas de spam dans le chat</li>
+                    </ul>
+                    
+                    <h4 style="color: #ff6b35; margin: 1rem 0;">⚙️ Configuration Serveur :</h4>
+                    <ul style="margin-left: 1rem;">
+                        <li>👥 <strong>Joueurs :</strong> Maximum 7 joueurs + 2 slots réservés</li>
+                        <li>🗺️ <strong>Carte :</strong> Navezgane (taille 6144)</li>
+                        <li>⏰ <strong>Cycle :</strong> Jour/Nuit de 60 minutes (18min de jour)</li>
+                        <li>💀 <strong>Mort :</strong> Pas de pénalité XP, objets tombent au sol</li>
+                        <li>🏠 <strong>Bedroll :</strong> Expire après 45 jours d'inactivité</li>
+                        <li>🌙 <strong>Blood Moon :</strong> Tous les 7 jours avec alerte 8h avant</li>
+                        <li>📦 <strong>Loot :</strong> Abondance x2, respawn tous les 10 jours</li>
+                        <li>✈️ <strong>Airdrops :</strong> Toutes les 72 heures avec marqueur</li>
+                    </ul>
+
+                    <h4 style="color: #ff6b35; margin: 1rem 0;">🛡️ Système de Protection :</h4>
+                    <ul style="margin-left: 1rem;">
+                        <li>🆕 Zone sécurisée pour nouveaux joueurs (niveau ≤5) pendant 5h</li>
+                        <li>🏠 Jusqu'à 5 revendications de terrain par joueur</li>
+                        <li>📏 Taille des revendications : 41x41 blocs</li>
+                        <li>⚡ Durabilité x4 des structures dans les zones revendiquées</li>
+                        <li>⏰ Revendications expirent après 7 jours d'inactivité</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Deadlands Expedition - Serveur 7 Days to Die</p>
+            <p>Hébergé avec ❤️ sur Nitrado</p>
+        </div>
+    </footer>
+
+    <div class="copy-notification" id="copyNotification">
+        Adresse copiée dans le presse-papier !
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                showNotification();
+            }, function(err) {
+                console.error('Erreur lors de la copie: ', err);
+            });
+        }
+
+        function showNotification() {
+            const notification = document.getElementById('copyNotification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+        // Animation au scroll
+        window.addEventListener('scroll', () => {
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                const cardTop = card.offsetTop;
+                const cardHeight = card.offsetHeight;
+                const windowHeight = window.innerHeight;
+                const scrollTop = window.pageYOffset;
+
+                if (scrollTop > (cardTop + cardHeight - windowHeight)) {
+                    card.style.transform = 'translateY(-10px)';
+                    card.style.opacity = '1';
+                }
+            });
+        });
+
+        // Effet de particules (optionnel)
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = '4px';
+            particle.style.height = '4px';
+            particle.style.backgroundColor = '#ff6b35';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.opacity = '0.7';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = window.innerHeight + 'px';
+            particle.style.zIndex = '1';
+            
+            document.body.appendChild(particle);
+            
+            let position = window.innerHeight;
+            const animation = setInterval(() => {
+                position -= 2;
+                particle.style.top = position + 'px';
+                
+                if (position < -10) {
+                    clearInterval(animation);
+                    document.body.removeChild(particle);
+                }
+            }, 16);
+        }
+
+        // Créer des particules périodiquement
+        setInterval(createParticle, 2000);
+
+        // Fonctions pour la section map
+        let serverData = {
+            status: 'online',
+            players: Math.floor(Math.random() * 7),
+            maxPlayers: 7,
+            gameTime: Math.floor(Math.random() * 100) + 1,
+            bloodMoonCountdown: Math.floor(Math.random() * 7) + 1,
+            ping: Math.floor(Math.random() * 50) + 20
+        };
+
+        function updateServerStatus() {
+            document.getElementById('serverStatus').textContent = serverData.status === 'online' ? 'En ligne' : 'Hors ligne';
+            document.getElementById('playerCount').textContent = `${serverData.players} / ${serverData.maxPlayers}`;
+            document.getElementById('gameTime').textContent = `Jour ${serverData.gameTime}`;
+            document.getElementById('bloodMoon').textContent = `${serverData.bloodMoonCountdown} jours`;
+            document.getElementById('serverPing').textContent = `${serverData.ping} ms`;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+            
+            // Mettre à jour la liste des joueurs
+            updatePlayersList();
+        }
+
+        function updatePlayersList() {
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+            
+            if (serverData.players === 0) {
+                playersList.innerHTML = `
+                    <div class="player-card" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👤</div>
+                        <div style="color: #ff6b35; font-weight: bold;">Aucun joueur</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">Serveur vide</div>
+                    </div>
+                `;
+            } else {
+                const playerNames = ['Survivor_Alpha', 'ZombieHunter', 'BaseBuilder', 'Scavenger_Pro', 'NightRaider', 'LootMaster', 'Defender'];
+                for (let i = 0; i < serverData.players; i++) {
+                    const playerName = playerNames[i] || `Joueur_${i + 1}`;
+                    const level = Math.floor(Math.random() * 100) + 1;
+                    const status = Math.random() > 0.3 ? 'En vie' : 'Zombie';
+                    const statusColor = status === 'En vie' ? '#4ade80' : '#ef4444';
+                    
+                    playersList.innerHTML += `
+                        <div class="player-card" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">👤</div>
+                            <div style="color: #ff6b35; font-weight: bold;">${playerName}</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Niveau ${level}</div>
+                            <div style="font-size: 0.8rem; color: ${statusColor};">${status}</div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function refreshMap() {
+            // Simuler le rechargement de la carte
+            const mapContainer = document.getElementById('mapContainer');
+            mapContainer.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                // Simuler de nouvelles données
+                serverData.players = Math.floor(Math.random() * 7);
+                serverData.gameTime += Math.floor(Math.random() * 3);
+                serverData.bloodMoonCountdown = Math.max(1, serverData.bloodMoonCountdown - Math.floor(Math.random() * 2));
+                serverData.ping = Math.floor(Math.random() * 50) + 20;
+                
+                updateServerStatus();
+                mapContainer.style.opacity = '1';
+                
+                // Ajouter un effet de succès
+                showMapRefreshNotification();
+            }, 1000);
+        }
+
+        function toggleFullscreen() {
+            const mapContainer = document.getElementById('mapContainer');
+            if (!document.fullscreenElement) {
+                mapContainer.requestFullscreen().catch(err => {
+                    console.log('Erreur fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function showMapRefreshNotification() {
+            const notification = document.createElement('div');
+            notification.textContent = 'Carte mise à jour !';
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(255, 107, 53, 0.9);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                z-index: 1001;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '1';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 1500);
+        }
+
+        // Mise à jour automatique toutes les 30 secondes
+        setInterval(() => {
+            // Simuler des changements légers
+            if (Math.random() > 0.7) {
+                serverData.players = Math.min(7, Math.max(0, serverData.players + (Math.random() > 0.5 ? 1 : -1)));
+            }
+            if (Math.random() > 0.9) {
+                serverData.gameTime += 1;
+            }
+            serverData.ping = Math.floor(Math.random() * 50) + 20;
+            updateServerStatus();
+        }, 30000);
+
+        // Initialiser les données au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            updateServerStatus();
+        });
+    </script>
 </body>
 </html>
